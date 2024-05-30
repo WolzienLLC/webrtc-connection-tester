@@ -5,6 +5,7 @@ export interface reportType {
   qpSum: number;
   packetsSent: number;
   packetsReceived: number;
+  packetsLost: number;
   framesEncoded: number;
   framesDecoded: number;
   framesSent: number;
@@ -12,4 +13,11 @@ export interface reportType {
   RoundTripTime: number;
   bandwidth_estimate_average: number;
   bandwidth_estimate_max: number;
+  jitter?: number; // TODO figure out this calculation
+}
+
+export interface TestOptions {
+  continuous?: boolean;
+  useSyntheticDevices?: boolean;
+  maximumTestDurationSeconds?: number;
 }

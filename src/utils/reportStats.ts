@@ -11,6 +11,7 @@ export const reportStats = (stats1: RTCStatsReport, stats2: RTCStatsReport) => {
     qpSum: -1,
     packetsSent: -1,
     packetsReceived: -1,
+    packetsLost: -1,
     framesEncoded: -1,
     framesDecoded: -1,
     framesSent: -1,
@@ -22,7 +23,7 @@ export const reportStats = (stats1: RTCStatsReport, stats2: RTCStatsReport) => {
   const statsArray = Array.from(stats1.values());
   const statsArray2 = Array.from(stats2.values());
 
-  console.log(statsArray, "aaaarrrayyy", statsArray2);
+  console.log(statsArray, "||", statsArray2);
   const videoStats = statsArray.find(
     (report) => report.type === "inbound-rtp" && report.kind === "video"
   );
@@ -114,6 +115,11 @@ export const reportStats = (stats1: RTCStatsReport, stats2: RTCStatsReport) => {
     if (packetsReceived) {
       console.log("Packets received:", packetsReceived.packetsReceived);
       gatheredStatsReport.packetsReceived = packetsReceived.packetsReceived;
+    }
+    if (packetsSent && packetsReceived) {
+      const packetsLost = packetsSent - packetsReceived;
+      console.log("Packets received:", packetsLost);
+      gatheredStatsReport.packetsLost = packetsLost;
     }
     if (nackCount) {
       console.log("NACK count:", nackCount.nackCount);

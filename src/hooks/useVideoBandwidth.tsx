@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { Call, createCall } from "../utils/createCall";
 import { reportStats } from "../utils/reportStats";
-import { reportType } from "../utils/type";
+import { TestOptions, reportType } from "../utils/type";
+import { syntheticAudio } from "../synthetics/audio";
+import { syntheticVideo } from "../synthetics/video";
 
-const useVideoBandwidth = (iceServers: RTCIceServer[]) => {
+const useVideoBandwidth = (
+  iceServers: RTCIceServer[],
+  options?: TestOptions
+) => {
   const [gatheredStatsReport, setGatheredStatsReport] =
     useState<reportType | null>(null);
   let Call: Call;
@@ -11,22 +16,34 @@ const useVideoBandwidth = (iceServers: RTCIceServer[]) => {
   let intervalId: string | number | NodeJS.Timeout | undefined;
   let response1: RTCStatsReport, response2: RTCStatsReport;
 
-  const start = async (config: RTCConfiguration) => {
+  const start = async (
+    config: RTCConfiguration,
+    useSyntheticDevices?: boolean
+  ) => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
-      localStream = stream;
+      if (useSyntheticDevices) {
+        localStream.addTrack(syntheticAudio());
+        localStream.addTrack(syntheticVideo());
 
-      const videoTracks = localStream.getVideoTracks();
-      const audioTracks = localStream.getAudioTracks();
-      if (videoTracks.length > 0) {
-        console.log(`Using video device: ${videoTracks[0].label}`);
+        console.log("Using synthetic audio and video devices");
+      } else {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: true,
+        });
+        localStream = stream;
+
+        const videoTracks = localStream.getVideoTracks();
+        const audioTracks = localStream.getAudioTracks();
+
+        if (videoTracks.length > 0) {
+          console.log(`Using video device: ${videoTracks[0].label}`);
+        }
+        if (audioTracks.length > 0) {
+          console.log(`Using audio device: ${audioTracks[0].label}`);
+        }
       }
-      if (audioTracks.length > 0) {
-        console.log(`Using audio device: ${audioTracks[0].label}`);
-      }
+
       Call = createCall(config, "relay");
       Call.pc2.addEventListener("track", gotRemoteStream);
       localStream
@@ -36,7 +53,11 @@ const useVideoBandwidth = (iceServers: RTCIceServer[]) => {
       Call.establishConnection();
       checker(Call.pc1, Call.pc2);
     } catch (e) {
-      console.log(`getUserMedia() error:`, e);
+      if (!useSyntheticDevices) {
+        console.error(`getUserMedia() error:`, e);
+      } else {
+        console.error(`synthetic audio/video error:`, e);
+      }
     }
   };
   const gotRemoteStream = () => {
@@ -71,10 +92,18 @@ const useVideoBandwidth = (iceServers: RTCIceServer[]) => {
     const turnConfig: RTCConfiguration = {
       iceServers,
     };
-    start(turnConfig);
-    setTimeout(() => {
-      stopInterval();
-    }, 5000);
+    start(turnConfig, options?.useSyntheticDevices);
+
+    if (options?.continuous !== true) {
+      setTimeout(
+        () => {
+          stopInterval();
+        },
+        options?.maximumTestDurationSeconds
+          ? options?.maximumTestDurationSeconds * 1000
+          : 5000
+      );
+    }
   }, []);
 
   return gatheredStatsReport;
