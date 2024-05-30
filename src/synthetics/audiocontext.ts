@@ -84,4 +84,4 @@ class AudioContextFactory {
   }
 }
 
-module.exports = AudioContextFactory;
+export const getFactory = () => { return new AudioContextFactory({}) }

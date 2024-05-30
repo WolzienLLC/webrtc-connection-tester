@@ -1,9 +1,11 @@
+import { getFactory } from "./audiocontext";
+
 interface MediaStreamAudioDestinationNode extends AudioNode {
   stream: MediaStream;
 }
 
 export function syntheticAudio(): MediaStreamTrack {
-  const audioContextFactory = require("audiocontext");
+  const audioContextFactory = getFactory();
   const holder = {};
   const audioContext = audioContextFactory.getOrCreate(holder);
   const oscillator = audioContext.createOscillator();
