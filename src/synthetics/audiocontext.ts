@@ -1,11 +1,7 @@
-/* globals webkitAudioContext, AudioContext */
-'use strict';
+"use strict";
 
-const NativeAudioContext = typeof AudioContext !== 'undefined'
-  ? AudioContext
-  : typeof webkitAudioContext !== 'undefined'
-    ? webkitAudioContext
-    : null;
+const NativeAudioContext =
+  typeof AudioContext !== "undefined" ? AudioContext : null;
 
 /**
  * @interface AudioContextFactoryOptions
@@ -19,28 +15,34 @@ const NativeAudioContext = typeof AudioContext !== 'undefined'
  *   {@link AudioContextFactory} constructor
  */
 class AudioContextFactory {
+  private _audioContext: any;
+  private _holders: any;
+  private _AudioContext: typeof NativeAudioContext | undefined;
   /**
    * @param {AudioContextFactoryOptions} [options]
    */
-  constructor(options) {
-    options = Object.assign({
-      AudioContext: NativeAudioContext
-    }, options);
+  constructor(options: any) {
+    options = Object.assign(
+      {
+        AudioContext: NativeAudioContext,
+      },
+      options
+    );
     Object.defineProperties(this, {
       _AudioContext: {
-        value: options.AudioContext
+        value: options.AudioContext,
       },
       _audioContext: {
         value: null,
-        writable: true
+        writable: true,
       },
       _holders: {
-        value: new Set()
+        value: new Set(),
       },
       AudioContextFactory: {
         enumerable: true,
-        value: AudioContextFactory
-      }
+        value: AudioContextFactory,
+      },
     });
   }
 
@@ -51,7 +53,7 @@ class AudioContextFactory {
    * @param {*} holder - The object to hold a reference to the AudioContext
    * @returns {?AudioContext}
    */
-  getOrCreate(holder) {
+  getOrCreate(holder: any) {
     if (!this._holders.has(holder)) {
       this._holders.add(holder);
       if (this._AudioContext && !this._audioContext) {
@@ -71,7 +73,7 @@ class AudioContextFactory {
    * @param {*} holder - The object that held a reference to the AudioContext
    * @returns {void}
    */
-  release(holder) {
+  release(holder: any) {
     if (this._holders.has(holder)) {
       this._holders.delete(holder);
       if (!this._holders.size && this._audioContext) {
@@ -82,4 +84,4 @@ class AudioContextFactory {
   }
 }
 
-module.exports = new AudioContextFactory();
+module.exports = AudioContextFactory;

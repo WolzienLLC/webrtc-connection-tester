@@ -28,7 +28,7 @@
     "react": ">= 17.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.6",
+    "@types/node": "^20.12.13",
     "@types/react": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
@@ -38,9 +38,11 @@
     "typescript": "^5.0.2"
   },
   "author": "prashil vaishnani ",
-  "contributors": [{
-    "name": "Alexander Maisey",
-    "url": "https://github.com/alexandermaisey"
-    }],
+  "contributors": [
+    {
+      "name": "Alexander Maisey",
+      "url": "https://github.com/alexandermaisey"
+    }
+  ],
   "license": "MIT"
 }
