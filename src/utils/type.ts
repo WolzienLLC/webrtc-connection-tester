@@ -20,4 +20,5 @@ export interface TestOptions {
   continuous?: boolean;
   useSyntheticDevices?: boolean;
   maximumTestDurationSeconds?: number;
+  silent?: boolean;
 }
