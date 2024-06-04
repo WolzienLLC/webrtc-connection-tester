@@ -23,7 +23,7 @@ const useVideoBandwidth = () =>
       options?: TestOptions
     ) => {
       const silent = options?.silent ?? false;
-      const useSyntheticDevices = options?.silent ?? false;
+      const useSyntheticDevices = options?.useSyntheticDevices ?? false;
 
       console.log(
         `Starting test: Silent: ${silent.toString()} | Use Synthetic Devices: ${useSyntheticDevices.toString()}`
